@@ -1,0 +1,422 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
+## **Customer Segmentation Dataset**
+
+#### LA - 1 Exploratory Data Analysis
+
+##### Submitted By:- Abhinandan S Vishwaroop,1NT21IS005, 5 A
+
+
+### Introduction
+
+```{r}
+# Customer Segmentation is the process of splitting a customer base into multiple groups of individuals that share a similarity in ways a product is or can be marketed to them such as gender, age, interests, demographics, economic status, geography, behavioral patterns, spending habits and much more. Customer Segmentation is one the most important applications of unsupervised learning. Using clustering techniques, companies can identify the several segments of customers allowing them to target the potential user base. Companies use the clustering process to foresee or map customer segments with similar behavior to identify and target potential user base.Here we seek to achieve Value-based segmentation, where it differentiates customers by their economic value, grouping customers with the same value level into individual segments that can be distinctly targeted.
+```
+
+#### Let's load the **Customer Segmentation Dataset** into R
+
+```{r}
+# Load the Dataset
+
+customer_data <- read.csv("C:\\Users\\abhiv\\OneDrive\\Desktop\\Mall_Customers.csv")
+
+
+# Data Summary
+
+summary(customer_data)
+
+#To find missing values
+any(is.na(customer_data))
+```
+It returned **False** means the dataset has no missing values.
+
+```{r}
+# Retrieves the names of all the columns present in the dataset
+
+names(customer_data)
+
+# Gives the structure
+str(customer_data)
+
+# Outputs the initial rows of the dataset
+
+head(customer_data)
+
+# Outputs the summary of the dataset like max, min, Quartiles etc..
+
+summary(customer_data$Age)
+
+# Outputs the standard deviation of the dataset
+sd(customer_data$Age)
+```
+
+```{r}
+# Correlation Coefficient of Annual Income and Spending Score
+
+cor(customer_data$Annual.Income..k.., customer_data$Spending.Score..1.100.)
+```
+
+
+#### Let's find the summary and standard deviation of the Annual Income and Age columns
+
+```{r}
+summary(customer_data$Annual.Income..k..)
+sd(customer_data$Annual.Income..k..)
+summary(customer_data$Age)
+sd(customer_data$Spending.Score..1.100.)
+```
+
+### Customer Gender Visualization
+
+```{r}
+a=table(customer_data$Gender)
+barplot(a,main="Using BarPlot to display Gender Comparision",
+        ylab="Count",
+        xlab="Gender",
+        col=rainbow(7),
+        legend=rownames(a))
+```
+
+
+In R, the library **plotrix** is used for advanced plotting and visualization tasks, providing additional functionalities beyond the base plotting system. Plotrix offers a variety of specialized plotting functions and enhancements, making it particularly useful for creating complex and customized visualizations. 
+
+The library includes tools for creating 3D pie charts, polar plots, and color scales, among others. Additionally, it offers functionalities for labeling and annotating plots, which is valuable for improving the interpretability of visualizations. 
+
+The plotrix library extends R's plotting capabilities, making it a versatile tool for researchers and analysts who need more sophisticated and tailored visual representations of their data. Overall, the plotrix library enhances the flexibility and expressiveness of R's plotting capabilities, enabling users to create insightful and visually appealing plots for data analysis and presentation.
+```{r}
+pct=round(a/sum(a)*100)
+lbs=paste(c("Female","Male")," ",pct,"%",sep=" ")
+library(plotrix)
+pie3D(a,labels=lbs,
+      main="Pie Chart Depicting Ratio of Female and Male")
+```
+
+## Data Visualizations
+
+### Plots
+
+#### ***Histogram***
+
+```{r}
+# Load the ggplot2 library
+
+library(ggplot2)
+
+# Histogram of Age filling Gender
+
+ggplot(customer_data,aes(x= Age, fill=Gender))+geom_histogram(bins = 50) 
+
+
+```
+
+```{r}
+# Histogram of Annual income filling Gender
+
+ggplot(customer_data,aes(x= `Annual.Income..k..`,fill=Gender)) +geom_histogram(bins = 50) 
+```
+
+```{r}
+# Histogram of Spending Score filling Gender
+
+ggplot(customer_data,aes(x= `Spending.Score..1.100.`,fill=Gender)) +geom_histogram(bins=50) 
+```
+
+*Note*:-
+
+1. Most of the customers are between the age 30-35.
+2. Minimum age of a customer is 18, whereas maximum age of a customer is 70.
+3. The minimum spending score is 1, maximum is 99.
+
+#### *Analysis*
+
+**From the histogram, we conclude that customers between class 40 and 50 have the highest spending score among all the classes.**
+
+--------------------------------------------------------------------
+
+#### ***Bar Graph / BarPlot***
+
+```{r}
+# generates a bar plot 
+
+ggplot(customer_data,aes(x= Gender, fill = "#FF5733")) + geom_bar ()
+
+table(customer_data$Gender)
+```
+
+#### *Analysis*
+
+From the BarPlot, we observe that there are **more** number of **Female** customers than ***Male** Customers.
+
+#### ***Frequency Ploygon***
+
+```{r}
+# Histograms and frequency polygons both depict data distributions, but differ in representation. Histograms are bar charts, where bars represent the frequency of values within specified bins. Adjacent bars emphasize data continuity. 
+
+# Frequency polygons, line graphs, connect midpoints of histogram bars, offering a smoothed curve for distribution trends. While histograms emphasize raw counts, frequency polygons provide a more continuous view of the underlying distribution, aiding in identifying patterns and trends in datasets. 
+
+#The choice between them depends on the need for a detailed count-based representation (histograms) or a smoother visualization (frequency polygons).
+```
+
+```{r}
+ggplot(customer_data,aes(x= `Spending.Score..1.100.`, col=Gender)) + geom_freqpoly(bins=50)
+
+```
+
+```{r}
+ggplot(customer_data,aes(x= `Annual.Income..k..`, col=Gender)) + geom_freqpoly(bins=50)
+
+```
+
+#### ***Box Plot***
+
+```{r}
+# Box Plot of Annual Income and Gender
+
+ggplot(customer_data, aes(y =`Annual.Income..k..`, x= Gender)) +
+  geom_boxplot(color = "black", outlier.color = "red", width = 0.1)
+
+
+```
+
+```{r}
+# Box Plot of Annual Income and Age differentiating with Gender
+
+ggplot(customer_data, aes(y =`Annual.Income..k..`, x= Age, fill = Gender)) +
+  geom_boxplot(color = "black", outlier.color = "red", width = 0.1)
+
+```
+
+```{r}
+# Box Plot of Spending Score and Gender
+
+ggplot(customer_data, aes(y =`Spending.Score..1.100.`, x= Gender)) +
+  geom_boxplot(color = "black", outlier.color = "red", width = 0.1)
+
+```
+
+```{r}
+# Box Plot of Spending Score and Age differentiating with Gender
+
+ggplot(customer_data, aes(y =`Spending.Score..1.100.`, x= Age, fill = Gender)) +
+  geom_boxplot(color = "black", outlier.color = "red", width = 0.1)
+
+```
+
+```{r}
+# Box Plot of Spending Score and Annual Income
+
+ggplot(customer_data, aes(y =`Spending.Score..1.100.`, x =`Annual.Income..k..` )) +
+  geom_boxplot(color = "black", outlier.color = "red", width = 0.1)
+```
+
+## Correlation and Multi-Collinearity
+
+**Correlation** is a statistical measure that indicates the extent to which two or more variables move together. A positive correlation indicates that the variables increase or decrease together. A negative correlation indicates that if one variable increases, the other decreases, and vice versa.
+
+**Collinearity** is a linear association between two predictors. **Multicollinearity** is a situation where two or more predictors are highly linearly related. In general, an absolute correlation coefficient of >0.7 among two or more predictors indicates the presence of multicollinearity.
+
+Though correlation talks about bivariate linear relationship whereas multicollinearity are multivariate, if not always, correlation matrix can be a good indicator of multicollinearity and indicate the need for further investigation.
+
+```{r}
+# The GGally library in R is an extension to the popular ggplot2 package and is designed for exploring and visualizing relationships in multivariate datasets. It provides a set of functions and tools for creating scatterplot matrices, correlation plots, and other types of visualizations to help analyze the patterns and associations between variables.
+
+```
+
+```{r}
+# Load GGally Library
+
+library(GGally)
+```
+
+```{r}
+# The GGally library in R is an extension to the popular ggplot2 package and is designed for exploring and visualizing relationships in multivariate datasets. It provides a set of functions and tools for creating scatterplot matrices, correlation plots, and other types of visualizations to help analyze the patterns and associations between variables.
+```
+
+```{r}
+# ggcorr() function generates a visual representation of the correlation matrix, allowing for a quick assessment of variable relationships.
+
+ggcorr(customer_data)
+```
+
+```{r}
+ggcorr(customer_data, label = TRUE, label_alpha = TRUE)
+
+# label_alpha :- Display significance level (alpha) on the plot
+# label :- Display Correlation coefficients on the plot
+```
+
+```{r}
+#par sets up a plotting layout of 2 rows and 2 columns.
+#plot Generates scatterplots for each pair of variables in the customer_data dataset
+
+par(mfrow=c(2,2))
+plot(customer_data)
+```
+
+```{r}
+X <- customer_data[,2:5]
+ggpairs(X)
+
+# ggpairs() function creates a matrix of scatterplots for exploring relationships between multiple variables. It can include scatterplots, density plots, and correlation coefficients.
+```
+
+## Let's apply an unsupervised ML algorithm on the dataset.
+
+### K-Means Algorithm
+
+```{r}
+# The objective of K-means is to partition the data into 'K' clusters based on similarity, where 'K' is a predefined number.
+
+# The algorithm iteratively assigns data points to clusters and updates the cluster centroids until convergence.
+
+# Unlike supervised learning, where the algorithm is trained on a labeled dataset to predict output labels, K-means does not require labeled data. It identifies patterns solely based on the similarity of data points.
+
+# K-means is commonly used for clustering analysis, where the goal is to group similar data points into clusters, making it a valuable tool for exploratory data analysis and pattern discovery in unsupervised scenarios.
+```
+
+The main goal behind cluster partitioning methods like k-means is to define the clusters such that the intra-cluster variation stays minimum.
+
+Minimize (sum W(Ck)), k=1…k
+
+Where Ck represents the kth cluster and W(Ck) denotes the intra-cluster variation (this is the distance between data points in the same cluster). With the measurement of the total intra-cluster variation, one can evaluate the compactness of the clustering boundary. We can then proceed to define the optimal clusters as follows –
+
+1.  Calculate the clustering algorithm for several values of k. This can be done by creating a variation within k from 1 to 10 clusters. 
+2.  Calculate the total intra-cluster sum of square (iss). 
+3.  Plot iss based on the number of k clusters. This plot denotes the appropriate number of clusters required in our model.
+4.  In the plot, the location of a bend or a knee is the indication of the optimum number of clusters
+
+```{r}
+library(purrr)
+
+# purrr a package in R that provides a set of tools for functional programming, specifically designed to work seamlessly with the principles of the tidyverse. The purrr package makes it easier to work with and manipulate data in a functional programming paradigm.
+
+set.seed(123)
+
+#function to calculate total intra-cluster sum of square
+
+iss<-function(k)
+{kmeans(customer_data[,3:5],k,iter.max=100,nstart=100,algorithm="Lloyd" )$tot.withinss}
+k.value<-1:10
+iss_value<- map_dbl(k.value, iss)
+plot(k.value, iss_value,type="b", pch = 19, frame = FALSE,xlab="Number of clusters K",ylab="Total intra-clusters sum of squares")
+```
+
+## Average Silhouette Method
+
+With the help of the average silhouette method, we can measure the quality of our clustering operation. With this, we can determine how well within the cluster is the data object. If we obtain a high average silhouette width, it means that we have good clustering. The average silhouette method calculates the mean of silhouette observations for different k values. With the optimal number of k clusters, one can maximize the average silhouette over significant values for k clusters.
+
+Using the average silhouette widths (Distance between one cluster and the next  clusters) for every k from 1 to 10, and plotted an optimal number of clusters to find the k with the highest average width.
+
+```{r}
+library(NbClust)
+
+# The NbClust package in R is designed for determining the optimal number of clusters in a dataset. It provides a comprehensive set of indices and statistical tests for assessing the number of clusters in a clustering analysis. The package is particularly useful when the user is unsure about the appropriate number of clusters and wants to choose the best one based on various criteria.
+
+# The factoextra package in R is an extension to the popular factoMineR package and is designed to provide a set of functions for extracting and visualizing the results of multivariate data analyses, particularly those obtained from factor analysis and clustering methods.
+
+library(factoextra)
+
+
+
+```
+
+```{r}
+fviz_nbclust(customer_data[,3:5], kmeans, method = "silhouette")
+```
+
+#### We can observe that the optimal number of clusters is 6. It's time to plot those 6 clusters
+
+### Plotting of 6 clusters
+
+### We use PCA i.e, Principal Component Analysis
+
+```{r}
+pcclust= prcomp(customer_data[,3:5],scale=FALSE) #PCA
+summary(pcclust)
+```
+
+```{r}
+pcclust$rotation[,1:2]
+```
+
+```{r}
+k6<-kmeans(customer_data[,3:5],6,iter.max=100,nstart=50,algorithm="Lloyd")
+```
+
+```{r}
+# annual income vs spending score clusters 
+library(ggplot2)
+ggplot(customer_data, aes(x =`Annual.Income..k..`, y = `Spending.Score..1.100.`)) + 
+  geom_point(stat = "identity", aes(color = as.factor(k6$cluster))) +
+  scale_color_discrete(name=" ",breaks=c("1", "2", "3", "4", "5","6"), labels=c("Cluster 1", "Cluster 2", "Cluster 3", "Cluster 4", "Cluster 5","Cluster 6")) +
+  ggtitle("Segments of Mall Customers", subtitle = "Using K-means Clustering")
+```
+
+```{r}
+#spending score vs age clusters
+ggplot(customer_data, aes(x =`Spending.Score..1.100.`, y =Age)) + 
+  geom_point(stat = "identity", aes(color = as.factor(k6$cluster))) +
+  scale_color_discrete(name=" ",breaks=c("1", "2", "3", "4", "5","6"),labels=c("Cluster 1", "Cluster 2", "Cluster 3", "Cluster 4", "Cluster 5","Cluster 6")) +
+  ggtitle("Segments of Mall Customers", subtitle = "Using K-means Clustering")
+
+```
+
+```{r}
+#annual income vs age clusters
+ggplot(customer_data, aes(x =`Annual.Income..k..`, y =Age)) + 
+  geom_point(stat = "identity", aes(color = as.factor(k6$cluster))) +
+  scale_color_discrete(name=" ",breaks=c("1", "2", "3", "4", "5","6"),labels=c("Cluster 1", "Cluster 2", "Cluster 3", "Cluster 4", "Cluster 5","Cluster 6")) +
+  ggtitle("Segments of Mall Customers", subtitle = "Using K-means Clustering")
+```
+
+## Analysis
+
+Cluster 1 – This cluster represents the customers having a high annual income as well as a high annual spend with an age between age 28 and 40.
+Cluster 2 - This clusters represents customers with a average annual income(above 25 below 60 ), average spending score(above 25 and below 60) and ages above 40 years.
+Cluster 3 – This cluster denotes the customers with low annual income as well as low yearly spend of income with ages spreading through out the spectrum.
+Cluster 4 – This cluster denotes a high annual income and low yearly spending score with with ages spreading through out the spectrum.
+Cluster 5 – This cluster represents a low annual income but its high yearly expenditure.
+Cluster  6 - This clusters represents customers with a average annual income(above 30 below 80 ), average spending score(above 25 and below 62) and ages of 40 and below.
+
+
+#### Mapping clusters back to the data to see which customer belongs to which cluster
+
+#### Let's Map all the 6  Clusters to the data set.
+
+```{r}
+# In R, the order() function is used to obtain the order or permutation of the indices that would sort a vector or a set of vectors. This function is often used to sort data or reorganize it based on specific criteria.
+
+o = order(k6$cluster)
+
+# Using only customer ID for easy tracking instead of the whole dataset.
+data.frame(customer_data$CustomerID[o],k6$cluster[o])
+
+```
+
+```{r}
+# mapping using all the other columns i.e, to the entire dataset
+
+x = data.frame(customer_data$CustomerID[o], customer_data$Gender[o], customer_data$Age[o], customer_data$`Annual.Income..k..`[o], customer_data$`Spending.Score..1.100.`[o],k6$cluster[o])
+
+```
+
+### Conclusion
+
+1. The dataset contains information about customers, including gender, age, annual income, and spending score.
+2. No missing values were found in the dataset, ensuring completeness for analysis.
+3. Summary statistics and visualizations were generated for key variables like age, annual income, and spending score.
+4. Histograms and box plots provided insights into the distribution and central tendencies of these variables.
+5. Bar plots and pie charts were used to visualize the gender distribution among customers.
+6. It was observed that there were more female customers compared to male customers.
+7. The K-means algorithm was applied to cluster customers into segments based on annual income, spending score, and age.
+8. The silhouette method and the elbow method were used to determine the optimal number of clusters, which was found to be 6.
+9. Visualization of clusters using scatter plots revealed distinct segments with different characteristics.
+10. Each cluster was analyzed to understand the characteristics of customers within them.
+11. Clusters were differentiated based on factors such as high/low annual income, high/low spending score, and age groups.
+12. Interpretation of clusters allowed for targeted marketing strategies and personalized customer engagement.
+13. Customer segmentation is crucial for tailoring marketing strategies to specific customer groups.
+14. The identified clusters provide a basis for targeted advertising, promotions, and services.
+15. Understanding customer segments can lead to improved customer satisfaction and increased business revenue.
